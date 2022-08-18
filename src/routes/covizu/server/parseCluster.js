@@ -2,7 +2,7 @@
 const pat = /^hCoV-19\/(.+\/.+)\/20[0-9]{2}$/gi;
 const { unique, mode, tabulate, merge_tables, utcDate } = require('./utils');
 const d3 = require('../js/d3.js');
-const { getCovizuData } = require('../custom/fetchData');
+const { getData } = require('../custom/fetchData');
 
 // Tom Thomson - autumn birches 1916
 var province_pal = {
@@ -432,7 +432,7 @@ async function map_clusters_to_tips(df, clusters) {
     tips[root_idx].x2 = root_xcoord;
 
     // map dbstats for lineage to tip
-    const dbstats = await getCovizuData('dbstats');
+    const dbstats = await getData('dbstats');
     tip_stats = dbstats['lineages'][cluster['lineage']];
     tips[root_idx].max_ndiffs = tip_stats.max_ndiffs;
     tips[root_idx].mean_ndiffs = tip_stats.mean_ndiffs;

@@ -38,7 +38,7 @@ async function updateData() {
   }
 }
 
-export async function getCovizuData(dataType: DataTypes) {
+export async function getData(dataType: DataTypes) {
   if (storedData[dataType] === undefined) {
     await updateData();
   }
