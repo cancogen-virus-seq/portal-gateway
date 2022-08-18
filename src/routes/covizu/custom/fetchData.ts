@@ -26,9 +26,9 @@ export const storedData: StoredData = {
   dbstats: undefined,
   df: undefined,
   lineage_to_cid: undefined,
+  searchSuggestions: undefined,
   timetree: undefined,
   tips: undefined,
-  searchSuggestions: undefined,
 };
 
 // fetch data on startup
@@ -56,14 +56,14 @@ async function updateData() {
     storedData.beaddata = await parse_clusters(storedData.clusters);
     storedData.df = await readTree(storedData.timetree);
     storedData.lineage_to_cid = await index_lineage(storedData.clusters);
-    storedData.tips = await map_clusters_to_tips(
-      storedData.df,
-      storedData.clusters,
-    );
     storedData.searchSuggestions = Object.keys(storedData.accn_to_cid)
       .sort()
       .concat(Object.keys(storedData.lineage_to_cid).sort())
       .map((accn) => [normalize(accn), accn]);
+    storedData.tips = await map_clusters_to_tips(
+      storedData.df,
+      storedData.clusters,
+    );
   }
 }
 
