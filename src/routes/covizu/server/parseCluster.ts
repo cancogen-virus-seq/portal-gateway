@@ -1,3 +1,7 @@
+// @ts-nocheck
+
+import { Clusters } from '../custom/types';
+
 // regular expression to remove redundant sequence name components
 const pat = /^hCoV-19\/(.+\/.+)\/20[0-9]{2}$/gi;
 const { unique, mode, tabulate, merge_tables, utcDate } = require('./utils');
@@ -247,7 +251,7 @@ const parse_edgelist = (cluster, variants, points) => {
  * easier to map to SVG.
  * @param {Object} clusters:
  */
-function parse_clusters(clusters) {
+async function parse_clusters(clusters) {
   var cluster,
     variant,
     coldates,
@@ -460,7 +464,7 @@ async function map_clusters_to_tips(df, clusters) {
  * @param {Object} clusters:  contents of clusters JSON
  * @returns {{}}
  */
-function index_accessions(clusters) {
+async function index_accessions(clusters) {
   var index = {};
   for (const cid in clusters) {
     var accns = Object.entries(clusters[cid].nodes)
@@ -474,7 +478,7 @@ function index_accessions(clusters) {
   return index;
 }
 
-function index_lineage(clusters) {
+async function index_lineage(clusters: Clusters) {
   var index = {};
   for (const cid in clusters) {
     var accns = clusters[cid].lineage;
@@ -513,7 +517,7 @@ function merge_maps(maps) {
  * @param regions
  * @returns {{}}
  */
-function map_country_to_region(country, regions) {
+function map_country_to_region(country: string, regions: any) {
   // Compile map of country to region
   let c2r = {},
     ci,
@@ -535,9 +539,9 @@ function map_country_to_region(country, regions) {
   return c2r;
 }
 
-module.exports = {
-  parse_clusters,
-  map_clusters_to_tips,
+export {
   index_accessions,
   index_lineage,
+  map_clusters_to_tips,
+  parse_clusters,
 };

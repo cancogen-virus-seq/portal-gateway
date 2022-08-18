@@ -1,3 +1,5 @@
+// data
+
 export type ClusterItem = {
   bytes: number;
   content_type: string;
@@ -16,10 +18,16 @@ export type Dbstats = {
 export type Clusters = ClusterItem[];
 
 export type StoredData = {
+  accn_to_cid?: any;
+  beaddata?: any;
   clusters?: Clusters;
   dataVersion?: DataVersion;
   dbstats?: Dbstats;
+  df?: any;
+  lineage_to_cid?: any;
+  searchSuggestions?: any;
   timetree?: Timetree;
+  tips?: any;
 };
 
-export type DataTypes = keyof StoredData;
+export type StoredDataTypes = keyof StoredData;

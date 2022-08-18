@@ -6,7 +6,7 @@
  * @param {string} text Newick tree string.
  * @return {object} Root of tree.
  */
-const readTree = (text) => {
+const readTree = async (text) => {
   // remove whitespace
   text = text.replace(/ |\t|\r?\n|\r/g, '');
 

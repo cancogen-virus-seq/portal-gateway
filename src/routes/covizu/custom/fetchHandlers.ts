@@ -44,7 +44,6 @@ export const getDataVersion = async () => {
 
 export const fetchCovizu = async (path: string) => {
   const url = urlJoin(dataUrlBase, path);
-  console.log({ url });
   try {
     const res = await axiosCovizu({
       url,
