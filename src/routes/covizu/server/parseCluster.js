@@ -1,8 +1,9 @@
 // regular expression to remove redundant sequence name components
 const pat = /^hCoV-19\/(.+\/.+)\/20[0-9]{2}$/gi;
 const { unique, mode, tabulate, merge_tables, utcDate } = require('./utils');
-const dbstats = require('../data/dbstats.json');
+// const dbstats = require('../data/dbstats.json');
 const d3 = require('../js/d3.js');
+const { getDbStats } = require('../dataFetcher');
 
 // Tom Thomson - autumn birches 1916
 var province_pal = {
@@ -357,7 +358,7 @@ function parse_clusters(clusters) {
  * @param {Array} clusters: data from clusters JSON
  * @returns {Array} subset of data frame annotated with cluster data
  */
-function map_clusters_to_tips(df, clusters) {
+async function map_clusters_to_tips(df, clusters) {
   // extract accession numbers from phylogeny data frame
   var tips = df.filter((x) => x.children.length === 0),
     tip_labels = tips.map((x) => x.thisLabel), // accessions
@@ -432,6 +433,7 @@ function map_clusters_to_tips(df, clusters) {
     tips[root_idx].x2 = root_xcoord;
 
     // map dbstats for lineage to tip
+    const dbstats = await getDbStats();
     tip_stats = dbstats['lineages'][cluster['lineage']];
     tips[root_idx].max_ndiffs = tip_stats.max_ndiffs;
     tips[root_idx].mean_ndiffs = tip_stats.mean_ndiffs;

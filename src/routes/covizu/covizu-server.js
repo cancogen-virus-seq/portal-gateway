@@ -7,114 +7,71 @@ const {
   index_lineage,
 } = require('./server/parseCluster');
 const { readTree } = require('./server/phylo');
-import { dataUrls, fetchCovizu } from './custom';
+// const { dataUrls, fetchCovizu } = requre('./custom');
+const { getClusters, getTimetree } = require('./dataFetcher');
 
-app.use(compression());
+// app.use(compression());
 
-try {
-  var tree = fs.readFileSync('./data/timetree.nwk', 'utf8');
-} catch (e) {
-  console.log('Error:', e.stack);
+// const clusters = await fetchCovizu(dataUrls.clusters);
+// const tree = await fetchCovizu(dataUrls.timetree);
+
+// const df = readTree(tree);
+// const beaddata = parse_clusters(clusters);
+// const tips = await map_clusters_to_tips(df, clusters);
+// const accn_to_cid = index_accessions(clusters);
+// const lineage_to_cid = index_lineage(clusters);
+
+// // This is a hack to match anything that could be an acc number prefix
+// const prefix =
+//   /^(E|I|EP|IS|EPI_I|EPI_IS|EPI_ISL_?|EPI_?|ISL_?|[A-Z]\.[1-9]+)$/i;
+// const MIN_RESULTS = 10;
+// const normalize = (str) => str.replace(/[^a-z0-9]/gi, '').toLowerCase();
+// const data = Object.keys(accn_to_cid)
+//   .sort()
+//   .concat(Object.keys(lineage_to_cid).sort())
+//   .map((accn) => [normalize(accn), accn]);
+
+// cache processed data
+// check if data version increased not check undefined
+
+async function getDf() {
+  const tree = await getTimetree();
+  return readTree(tree);
 }
 
-const clusters = await fetchCovizu(dataUrls.clusters);
-const tree = await fetchCovizu(dataUrls.timetree);
+async function getBeadData() {
+  const clusters = await getClusters();
+  const beaddata = parse_clusters(clusters);
 
-const df = readTree(tree);
-const beaddata = parse_clusters(clusters);
-const tips = map_clusters_to_tips(df, clusters);
-const accn_to_cid = index_accessions(clusters);
-const lineage_to_cid = index_lineage(clusters);
+  return beaddata;
+}
 
-// This is a hack to match anything that could be an acc number prefix
-const prefix =
-  /^(E|I|EP|IS|EPI_I|EPI_IS|EPI_ISL_?|EPI_?|ISL_?|[A-Z]\.[1-9]+)$/i;
-const MIN_RESULTS = 10;
-const normalize = (str) => str.replace(/[^a-z0-9]/gi, '').toLowerCase();
-const data = Object.keys(accn_to_cid)
-  .sort()
-  .concat(Object.keys(lineage_to_cid).sort())
-  .map((accn) => [normalize(accn), accn]);
+async function getTips() {
+  const clusters = await getClusters();
+  const df = await getDf();
+  const tips = await map_clusters_to_tips(df, clusters);
 
-// The following three get requests are to retrieve edge, bead and variant information for individual clusters
-app.get('/api/edgeList/:cindex', (req, res) => {
-  res.send(beaddata[req.params.cindex].edgelist);
-});
+  return tips;
+}
 
-app.get('/api/points/:cindex', (req, res) => {
-  res.send(beaddata[req.params.cindex].points);
-});
+async function getAccnToCid() {
+  const clusters = await getClusters();
+  const accn_to_cid = index_accessions(clusters);
 
-app.get('/api/variants/:cindex', (req, res) => {
-  res.send(beaddata[req.params.cindex].variants);
-});
+  return accn_to_cid;
+}
 
-// Returns the lineage name for the provided cluster index
-app.get('/api/lineage/:cindex', (req, res) => {
-  res.send(clusters[req.params.cindex].lineage);
-});
+async function getLineageToCid() {
+  const clusters = await getClusters();
+  const lineage_to_cid = index_lineage(clusters);
 
-// Returns the cluster index for the provided accession
-app.get('/api/cid/:accession', (req, res) => {
-  res.send(accn_to_cid[req.params.accession]);
-});
+  return lineage_to_cid;
+}
 
-// Returns information required to generate the tooltip when a user hovers over a cluster
-app.get('/api/tips', (req, res) => {
-  res.send(tips);
-});
-
-app.get('/api/df', (req, res) => {
-  res.send(df);
-});
-
-app.get('/api/lineagetocid', (req, res) => {
-  res.send(lineage_to_cid);
-});
-
-// Returns all beads that match the query, within the start and end dates provided
-app.get('/api/searchHits/:query/:start/:end', (req, res) => {
-  // Flatten the json data to an array with bead data only
-  let flat_data = beaddata.map((bead) => bead.points).flat();
-  let start_date = utcDate(req.params.start);
-  let end_date = utcDate(req.params.end);
-
-  //Find all the beads that are a hit. Convert text_query to lower case and checks to see if there is a match
-  let search_hits = flat_data.filter(function (bead) {
-    temp =
-      (bead.accessions.some((accession) =>
-        accession.toLowerCase().includes(req.params.query.toLowerCase()),
-      ) ||
-        bead.labels.some((label) =>
-          label.toLowerCase().includes(req.params.query.toLowerCase()),
-        )) &&
-      bead.x >= start_date &&
-      bead.x <= end_date;
-    return temp;
-  });
-
-  res.send(search_hits);
-});
-
-// Requests sent to provide search suggestions based on the user query
-app.get('/api/getHits/:query', (req, res) => {
-  function as_label(search_data) {
-    const [, accn] = search_data;
-    return accn;
-  }
-
-  const term = req.params.query;
-
-  if (!/\d/.test(term)) {
-    if (prefix.test(term)) {
-      res.send(data.slice(0, MIN_RESULTS).map(as_label));
-    } else {
-      res.send([]);
-    }
-  } else {
-    const result = data.filter(
-      (array) => array[0].indexOf(normalize(term)) > -1,
-    );
-    res.send(result.slice(0, MIN_RESULTS).map(as_label));
-  }
-});
+module.exports = {
+  getAccnToCid,
+  getBeadData,
+  getDf,
+  getLineageToCid,
+  getTips,
+};
