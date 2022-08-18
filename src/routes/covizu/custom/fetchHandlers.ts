@@ -2,18 +2,13 @@
 
 import axios from 'axios';
 import urlJoin from 'url-join';
-import getAppConfig from '../../config/global';
-
-type ClusterData = {
-  bytes: number;
-  content_type: string;
-  hash: string;
-  last_modified: string;
-  name: string;
-};
+import getAppConfig from '../../../config/global';
+import { ClusterItem } from './types';
 
 const config = getAppConfig();
 
+// TODO - error handling - wrap this in a try/catch
+// have catch return next(error)
 const axiosCovizu = axios.create({
   headers: {
     'Cache-Control': 'no-cache',
@@ -38,7 +33,7 @@ export const getDataVersion = async () => {
   // returns max 1000 files.
   const { data: fileList } = await axiosCovizu.get(fileListUrl);
   const clusterNames = fileList
-    .map((file: ClusterData) => file.name)
+    .map((file: ClusterItem) => file.name)
     .filter((clusterName: string) => clustersFilenameTest.test(clusterName))
     .sort();
   const latestDate =
@@ -47,25 +42,16 @@ export const getDataVersion = async () => {
   return latestDate;
 };
 
-// const dataVersion = await getDataVersion();
-
-// setup - fetch the data
-
-// export const dataUrls = {
-//   clusters: ['clusters', dataVersion, 'json'].join('.'),
-//   dbstats: ['dbstats', dataVersion, 'json'].join('.'),
-//   timetree: ['timetree', dataVersion, 'nwk'].join('.'),
-// };
-
-// export const fetchCovizu = async (path: keyof typeof dataUrls) => {
-//   const url = urlJoin(dataUrlBase, dataUrls[path]);
-//   console.log({ url });
-//   try {
-//     return await axiosCovizu({
-//       url,
-//     });
-//   } catch (e) {
-//     console.log('🔥', dataUrlBase);
-//     console.error('covizu error:', e);
-//   }
-// };
+export const fetchCovizu = async (path: string) => {
+  const url = urlJoin(dataUrlBase, path);
+  console.log({ url });
+  try {
+    const res = await axiosCovizu({
+      url,
+    });
+    return res.data;
+  } catch (e) {
+    console.log('🔥', dataUrlBase);
+    console.error('covizu error:', e);
+  }
+};

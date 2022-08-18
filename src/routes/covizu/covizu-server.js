@@ -8,7 +8,7 @@ const {
 } = require('./server/parseCluster');
 const { readTree } = require('./server/phylo');
 // const { dataUrls, fetchCovizu } = requre('./custom');
-const { getClusters, getTimetree } = require('./dataFetcher');
+const { getClusters, getTimetree } = require('./custom/fetchData');
 
 // app.use(compression());
 
@@ -42,7 +42,6 @@ async function getDf() {
 async function getBeadData() {
   const clusters = await getClusters();
   const beaddata = parse_clusters(clusters);
-
   return beaddata;
 }
 
@@ -50,21 +49,18 @@ async function getTips() {
   const clusters = await getClusters();
   const df = await getDf();
   const tips = await map_clusters_to_tips(df, clusters);
-
   return tips;
 }
 
 async function getAccnToCid() {
   const clusters = await getClusters();
   const accn_to_cid = index_accessions(clusters);
-
   return accn_to_cid;
 }
 
 async function getLineageToCid() {
   const clusters = await getClusters();
   const lineage_to_cid = index_lineage(clusters);
-
   return lineage_to_cid;
 }
 

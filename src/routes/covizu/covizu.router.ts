@@ -3,7 +3,7 @@
 // based on server.js from covizu
 
 import { Router } from 'express';
-import { getDataVersion } from './custom';
+import { getDataVersion } from './custom/fetchHandlers';
 import {
   getAccnToCid,
   getBeadData,
