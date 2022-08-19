@@ -1,3 +1,7 @@
+// @ts-nocheck
+
+import { Timetree } from '../custom/types';
+
 /**
  * Parse a Newick tree string into a doubly-linked
  * list of JS Objects.  Assigns node labels, branch
@@ -6,7 +10,7 @@
  * @param {string} text Newick tree string.
  * @return {object} Root of tree.
  */
-const readTree = async (text) => {
+const readTree = async (text: string) => {
   // remove whitespace
   text = text.replace(/ |\t|\r?\n|\r/g, '');
 
@@ -18,14 +22,14 @@ const readTree = async (text) => {
 
   var node_labels = [];
 
-  for (const token of tokens) {
+  for (let token of tokens) {
     if (token == '' || token == ';') {
       continue;
     }
     //console.log(token);
     if (token == '(') {
       // add a child to current node
-      var child = {
+      let child = {
         parent: curnode,
         children: [],
       };
@@ -34,7 +38,7 @@ const readTree = async (text) => {
     } else if (token == ',') {
       // climb down, add another child to parent
       curnode = curnode.parent;
-      var child = {
+      let child = {
         parent: curnode,
         children: [],
       };
@@ -81,7 +85,7 @@ const readTree = async (text) => {
  * Get the data frame
  * @param {Object} timetree:  time-scaled phylogenetic tree imported as JSON
  */
-const getTimeTreeData = (timetree) => {
+const getTimeTreeData = (timetree: Timetree) => {
   // generate tree layout (x, y coordinates
   rectLayout(timetree);
 
@@ -98,7 +102,7 @@ const getTimeTreeData = (timetree) => {
  * @param {Array} list: an Array of nodes
  * @return An Array of nodes in pre-order
  */
-function traverse(node, order = 'preorder', list = Array()) {
+function traverse(node: any, order = 'preorder', list = Array()) {
   if (order == 'preorder') list.push(node);
   for (var i = 0; i < node.children.length; i++) {
     list = traverse(node.children[i], order, list);
@@ -114,7 +118,7 @@ function traverse(node, order = 'preorder', list = Array()) {
  * @param {boolean} sort: if true, sort data frame by node name
  * @return Array of Objects
  */
-function fortify(tree, sort = true) {
+function fortify(tree: any, sort = true) {
   var df = [];
 
   for (const node of traverse(tree, 'preorder')) {
@@ -159,7 +163,7 @@ function fortify(tree, sort = true) {
  * Rectangular layout of tree, update nodes in place with x,y coordinates
  * @param {object} root
  */
-function rectLayout(root) {
+function rectLayout(root: any) {
   // assign vertical positions to tips by postorder traversal
   var counter = 0;
   for (const node of traverse(root, 'postorder')) {
@@ -189,6 +193,4 @@ function rectLayout(root) {
   }
 }
 
-module.exports = {
-  readTree,
-};
+export { readTree };

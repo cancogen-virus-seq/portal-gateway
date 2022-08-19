@@ -1,9 +1,19 @@
+// @ts-nocheck
+
+// utils written by covizu team
+
+// This is a hack to match anything that could be an acc number prefix
+const prefix =
+  /^(E|I|EP|IS|EPI_I|EPI_IS|EPI_ISL_?|EPI_?|ISL_?|[A-Z]\.[1-9]+)$/i;
+const MIN_RESULTS = 10;
+const normalize = (str: string) => str.replace(/[^a-z0-9]/gi, '').toLowerCase();
+
 /**
  * Returns unique elements in given array.
  * @param {Array} arr
  * @returns {string[]}
  */
-const unique = (arr) => {
+const unique = (arr: any[]) => {
   var key,
     history = {};
   for (var i = 0; i < arr.length; i++) {
@@ -21,7 +31,7 @@ const unique = (arr) => {
  * @param {Array} arr:  array of elements to sort
  * @return most common element
  */
-const mode = (arr) => {
+const mode = (arr: any[]) => {
   if (arr.length === 0) {
     return undefined;
   }
@@ -49,7 +59,7 @@ const mode = (arr) => {
  * @param {Array} arr:  Array of values to tabulate
  * @returns {{}} Associative list of unique value: count pairs
  */
-const tabulate = (arr) => {
+const tabulate = (arr: any[]) => {
   var val,
     counts = {};
   for (var i = 0; i < arr.length; i++) {
@@ -68,13 +78,13 @@ const tabulate = (arr) => {
 /**
  *
  */
-const merge_tables = (tables) => {
+const merge_tables = (tables: any[]) => {
   var total = {};
-  for (tab of tables) {
+  for (let tab of tables) {
     if (tab === null) {
       continue;
     }
-    for (key of Object.keys(tab)) {
+    for (let key of Object.keys(tab)) {
       if (total[key] === undefined) {
         total[key] = 0;
       }
@@ -89,15 +99,18 @@ const merge_tables = (tables) => {
  *
  * @param {String} date: The date to be converted
  */
-function utcDate(date) {
+function utcDate(date: string) {
   const dateObj = new Date(date);
   return new Date(dateObj.getTime() + dateObj.getTimezoneOffset() * 60000);
 }
 
-module.exports = {
-  unique,
-  mode,
-  tabulate,
+export {
   merge_tables,
+  MIN_RESULTS,
+  mode,
+  normalize,
+  prefix,
+  tabulate,
+  unique,
   utcDate,
 };

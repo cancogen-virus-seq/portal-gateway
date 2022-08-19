@@ -1,6 +1,6 @@
 // based on server.js from covizu
 
-import { Router } from 'express';
+import { ErrorRequestHandler, Router } from 'express';
 import compression from 'compression';
 import getAppConfig from '../../config/global';
 import { DataVersion } from './custom/types';
@@ -69,7 +69,6 @@ router.get('/lineagetocid', async (req, res) => {
   res.send(lineage_to_cid);
 });
 
-// TODO do these later
 // Returns all beads that match the query, within the start and end dates provided
 router.get('/searchHits/:query/:start/:end', async (req, res) => {
   // Flatten the json data to an array with bead data only
@@ -119,5 +118,13 @@ router.get('/getHits/:query', async (req, res) => {
     res.send(result.slice(0, MIN_RESULTS).map(as_label));
   }
 });
+
+router.use(((err, req, res, next) => {
+  if (req.xhr) {
+    res.status(500).send({ error: err });
+  } else {
+    next(err);
+  }
+}) as ErrorRequestHandler);
 
 export default router;

@@ -50,7 +50,7 @@ export const fetchCovizu = async (path: string) => {
     });
     return res.data;
   } catch (e) {
-    console.log('🔥', dataUrlBase);
     console.error('covizu error:', e);
+    throw new Error(e as string);
   }
 };

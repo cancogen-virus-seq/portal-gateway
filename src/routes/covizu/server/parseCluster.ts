@@ -6,7 +6,7 @@ import { Clusters } from '../custom/types';
 const pat = /^hCoV-19\/(.+\/.+)\/20[0-9]{2}$/gi;
 const { unique, mode, tabulate, merge_tables, utcDate } = require('./utils');
 const d3 = require('../js/d3.js');
-const { getData } = require('../custom/fetchData');
+import { getData } from '../custom/fetchData';
 
 // Tom Thomson - autumn birches 1916
 var province_pal = {
@@ -489,17 +489,17 @@ async function index_lineage(clusters: Clusters) {
 
 function merge_maps(maps) {
   var total = {};
-  for (m of maps) {
+  for (let m of maps) {
     // e.g., {'Canada': {'North America': 65}, 'USA': {'North America': 1}}
     if (m === null) {
       continue;
     }
-    for (key of Object.keys(m)) {
+    for (let key of Object.keys(m)) {
       // 'Canada'
       if (total[key] === undefined) {
         total[key] = {};
       }
-      for (subkey of Object.keys(m[key])) {
+      for (let subkey of Object.keys(m[key])) {
         if (total[key][subkey] === undefined) {
           total[key][subkey] = 0;
         }
