@@ -1,11 +1,12 @@
 // @ts-nocheck
+import { timeDay } from 'd3-time';
 
 import { Clusters } from '../custom/types';
 
 // regular expression to remove redundant sequence name components
 const pat = /^hCoV-19\/(.+\/.+)\/20[0-9]{2}$/gi;
 const { unique, mode, tabulate, merge_tables, utcDate } = require('./utils');
-const d3 = require('../js/d3.js');
+
 import { getData } from '../custom/fetchData';
 
 // Tom Thomson - autumn birches 1916
@@ -404,9 +405,7 @@ async function map_clusters_to_tips(df, clusters) {
       last_date = utcDate(coldates[coldates.length - 1]);
 
     // Calculate the mean collection date
-    let date_diffs = coldates.map((x) =>
-        d3.timeDay.count(first_date, utcDate(x)),
-      ),
+    let date_diffs = coldates.map((x) => timeDay.count(first_date, utcDate(x))),
       mean_date = Math.round(
         date_diffs.reduce((a, b) => a + b, 0) / date_diffs.length,
       );
@@ -451,7 +450,7 @@ async function map_clusters_to_tips(df, clusters) {
       rate = 0.0655342, // subs per genome per day
       exp_diffs = rate * mean_time; // expected number of differences
     tips[root_idx].residual = tip_stats.mean_ndiffs - exp_diffs; // tip_stats.residual;
-    tips[root_idx].mcoldate = d3.timeDay.offset(first_date, mean_date);
+    tips[root_idx].mcoldate = timeDay.offset(first_date, mean_date);
   }
   return tips;
 }
