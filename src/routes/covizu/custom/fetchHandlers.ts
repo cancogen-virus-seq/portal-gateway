@@ -31,13 +31,17 @@ export const getDataVersion = async () => {
   // all have the same date in the filename.
   // only fetch one file to get the date.
   // returns max 1000 files.
-  const { data: fileList } = await axiosCovizu.get(fileListUrl);
+  const { data: fileList } = (await axiosCovizu
+    .get(fileListUrl)
+    .catch((reason) => {
+      console.log('Error:', reason);
+    })) || { data: [] };
   const clusterNames = fileList
     .map((file: ClusterItem) => file.name)
     .filter((clusterName: string) => clustersFilenameTest.test(clusterName))
     .sort();
   const latestDate =
-    clusterNames[clusterNames.length - 1].match(dateTest)[0] || '';
+    clusterNames?.[clusterNames?.length - 1]?.match(dateTest)?.[0] || '';
 
   return latestDate;
 };
