@@ -1,5 +1,5 @@
 // covizu virusseq version
-export const COVIZU_VERSION = '1.1.0';
+export const COVIZU_VERSION = '1.0.0';
 
 export const checkIfNewData = (current: string, stored: string) => {
   const versionCurrent = new Date(current);
