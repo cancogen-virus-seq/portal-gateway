@@ -59,7 +59,6 @@ export interface AppConfig {
   covizu: {
     dataUrl: string;
     fileListUrl: string;
-    version: string;
   };
 }
 
