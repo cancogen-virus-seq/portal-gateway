@@ -4,6 +4,7 @@ import axios from 'axios';
 import urlJoin from 'url-join';
 import getAppConfig from '../../../config/global';
 import { ClusterItem } from './types';
+import { COVIZU_VERSION } from './utils';
 
 const config = getAppConfig();
 
@@ -20,8 +21,8 @@ const axiosCovizu = axios.create({
 
 // setup - find out the latest version of the data
 
-const dataUrlBase = urlJoin(config.covizu.dataUrl, config.covizu.version);
-const fileListUrl = `${config.covizu.fileListUrl}?format=json&prefix=${config.covizu.version}/clusters.20`;
+const dataUrlBase = urlJoin(config.covizu.dataUrl, COVIZU_VERSION);
+const fileListUrl = `${config.covizu.fileListUrl}?format=json&prefix=${COVIZU_VERSION}/clusters.20`;
 const clustersFilenameTest =
   /^(\d+\.){2}\d+\/(clusters\.)\d{4}(-\d{2}){2}(\.json)$/;
 const dateTest = /\d{4}(-\d{2}){2}/;

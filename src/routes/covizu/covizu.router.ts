@@ -7,6 +7,7 @@ import { DataVersion, StoredDataTypes } from './custom/types';
 import { getDataVersion } from './custom/fetchHandlers';
 import { getData } from './custom/fetchData';
 import { MIN_RESULTS, normalize, prefix, utcDate } from './server/utils';
+import { COVIZU_VERSION } from './custom/utils';
 
 const config = getAppConfig();
 
@@ -15,10 +16,9 @@ const router: Router = Router();
 router.use(compression());
 
 router.get('/status', async (req, res) => {
-  const covizuVersion = config.covizu.version;
   const dataVersion = (await getDataVersion()) as DataVersion;
   res.status(200).send({
-    covizuVersion,
+    covizuVersion: COVIZU_VERSION,
     dataVersion,
   });
 });
