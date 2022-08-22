@@ -3,7 +3,7 @@
 import { ErrorRequestHandler, Router } from 'express';
 import compression from 'compression';
 import getAppConfig from '../../config/global';
-import { DataVersion } from './custom/types';
+import { DataVersion, StoredDataTypes } from './custom/types';
 import { getDataVersion } from './custom/fetchHandlers';
 import { getData } from './custom/fetchData';
 import { MIN_RESULTS, normalize, prefix, utcDate } from './server/utils';
@@ -119,6 +119,14 @@ router.get('/getHits/:query', async (req, res) => {
   }
 });
 
+// CUSTOM - get unprocessed data
+router.get('/data/:query', async (req, res) => {
+  const file = req.params.query.split('.')[0] as StoredDataTypes;
+  const data = await getData(file);
+  res.send(data);
+});
+
+// CUSTOM - error handling
 router.use(((err, req, res, next) => {
   if (req.xhr) {
     res.status(500).send({ error: err });
