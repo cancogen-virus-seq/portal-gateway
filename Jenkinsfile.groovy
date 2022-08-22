@@ -88,6 +88,7 @@ pipeline {
         anyOf {
           branch 'develop'
           branch 'main'
+          branch '1-add-covizu'
           // branch 'test'
         }
       }
@@ -101,7 +102,7 @@ pipeline {
             sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
 
             script {
-              if (env.BRANCH_NAME ==~ /(develop|upgrades|test)/) { //push edge and commit tags
+              if (env.BRANCH_NAME ==~ /(develop|upgrades|test|1-add-covizu)/) { //push edge and commit tags
                 sh "docker tag api:${commit} ${gitHubRegistry}/${gitHubRepo}:${commit}"
                 sh "docker push ${gitHubRegistry}/${gitHubRepo}:${commit}"
 
@@ -144,6 +145,7 @@ pipeline {
       when {
         anyOf {
           branch 'develop'
+          branch '1-add-covizu'
         // branch 'test'
         }
       }
