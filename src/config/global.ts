@@ -81,15 +81,12 @@ const loadVaultSecrets = async () => {
   }
 };
 
-const buildAppSecrets = async (
-  secrets: Record<string, any> = {},
-): Promise<AppSecrets> => {
+const buildAppSecrets = async (secrets: Record<string, any> = {}): Promise<AppSecrets> => {
   logger.info('Building app secrets...');
 
   appSecrets = {
     auth: {
-      clientSecret:
-        secrets.AUTH_CLIENT_SECRET || process.env.AUTH_CLIENT_SECRET || '',
+      clientSecret: secrets.AUTH_CLIENT_SECRET || process.env.AUTH_CLIENT_SECRET || '',
     },
   };
   return appSecrets;
@@ -110,9 +107,7 @@ const getAppConfig = (): AppConfig => {
   return {
     auth: {
       apiRootUrl: process.env.AUTH_API_ROOT || '',
-      jwksUri: process.env.AUTH_API_ROOT
-        ? urlJoin(process.env.AUTH_API_ROOT, JWKS_URI_PATH)
-        : '',
+      jwksUri: process.env.AUTH_API_ROOT ? urlJoin(process.env.AUTH_API_ROOT, JWKS_URI_PATH) : '',
       clientId: process.env.AUTH_CLIENT_ID || '',
       sessionDuration: Number(process.env.AUTH_SESSION_DURATION) || 1800000,
       sessionTokenKey: process.env.AUTH_SESSION_TOKEN_KEY || '',
@@ -126,8 +121,7 @@ const getAppConfig = (): AppConfig => {
     },
     flag: {
       storageRootAdmin:
-        (process.env.FLAG__STORAGE_ROOT_ADMIN || '').toLowerCase() === 'true' ||
-        false,
+        (process.env.FLAG__STORAGE_ROOT_ADMIN || '').toLowerCase() === 'true' || false,
     },
     es: {
       user: process.env.ES_USER || '',

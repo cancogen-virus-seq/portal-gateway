@@ -1,5 +1,3 @@
-// data
-
 export type ClusterItem = {
   bytes: number;
   content_type: string;

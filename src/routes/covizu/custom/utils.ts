@@ -1,6 +1,6 @@
 // *** covizu virusseq version ***
-// Increase the version number only for breaking changes,
-// that affect the shape of the data provided by the Covizu team.
+// This version number is used to fetch data that is the correct shape for the current code version.
+// Only increment the version number if the data shape changes.
 export const COVIZU_VERSION = '1.0.0';
 
 export const checkIfNewData = (current: string, stored: string) => {

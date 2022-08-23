@@ -1,27 +1,16 @@
-// based on server.js from covizu
-
 import { ErrorRequestHandler, Router } from 'express';
 import compression from 'compression';
-import getAppConfig from '../../config/global';
 import { DataVersion, StoredDataTypes } from './custom/types';
 import { getDataVersion } from './custom/fetchHandlers';
 import { getData } from './custom/fetchData';
 import { MIN_RESULTS, normalize, prefix, utcDate } from './server/utils';
 import { COVIZU_VERSION } from './custom/utils';
 
-const config = getAppConfig();
+// based on server.js from covizu
 
 const router: Router = Router();
 
 router.use(compression());
-
-router.get('/status', async (req, res) => {
-  const dataVersion = (await getDataVersion()) as DataVersion;
-  res.status(200).send({
-    covizuVersion: COVIZU_VERSION,
-    dataVersion,
-  });
-});
 
 // The following three get requests are to retrieve edge,
 // bead and variant information for individual clusters
@@ -112,11 +101,18 @@ router.get('/getHits/:query', async (req, res) => {
       res.send([]);
     }
   } else {
-    const result = searchSuggestions.filter(
-      (array: any) => array[0].indexOf(normalize(term)) > -1,
-    );
+    const result = searchSuggestions.filter((array: any) => array[0].indexOf(normalize(term)) > -1);
     res.send(result.slice(0, MIN_RESULTS).map(as_label));
   }
+});
+
+// CUSTOM - get version info
+router.get('/status', async (req, res) => {
+  const dataVersion = (await getDataVersion()) as DataVersion;
+  res.status(200).send({
+    covizuVersion: COVIZU_VERSION,
+    dataVersion,
+  });
 });
 
 // CUSTOM - get unprocessed data

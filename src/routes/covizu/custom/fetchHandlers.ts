@@ -1,15 +1,13 @@
-// covizu customizations for virusseq
-
 import axios from 'axios';
 import urlJoin from 'url-join';
 import getAppConfig from '../../../config/global';
 import { ClusterItem } from './types';
 import { COVIZU_VERSION } from './utils';
 
+// covizu customizations for virusseq
+
 const config = getAppConfig();
 
-// TODO - error handling - wrap this in a try/catch
-// have catch return next(error)
 const axiosCovizu = axios.create({
   headers: {
     'Cache-Control': 'no-cache',
@@ -23,28 +21,29 @@ const axiosCovizu = axios.create({
 
 const dataUrlBase = urlJoin(config.covizu.dataUrl, COVIZU_VERSION);
 const fileListUrl = `${config.covizu.fileListUrl}?format=json&prefix=${COVIZU_VERSION}/clusters.20`;
-const clustersFilenameTest =
-  /^(\d+\.){2}\d+\/(clusters\.)\d{4}(-\d{2}){2}(\.json)$/;
+const clustersFilenameTest = /^(\d+\.){2}\d+\/(clusters\.)\d{4}(-\d{2}){2}(\.json)$/;
 const dateTest = /\d{4}(-\d{2}){2}/;
 
 export const getDataVersion = async () => {
+  // fetch a list of files to find out the most recent date,
+  // but you only need to fetch one type of file.
   // assume that timetree, dbstats, and clusters files
   // all have the same date in the filename.
-  // only fetch one file to get the date.
-  // returns max 1000 files.
-  const { data: fileList } = (await axiosCovizu
-    .get(fileListUrl)
-    .catch((reason) => {
+  // *** returns max 1000 files ***
+  try {
+    const { data: fileList } = (await axiosCovizu.get(fileListUrl).catch((reason) => {
       console.log('Error:', reason);
     })) || { data: [] };
-  const clusterNames = fileList
-    .map((file: ClusterItem) => file.name)
-    .filter((clusterName: string) => clustersFilenameTest.test(clusterName))
-    .sort();
-  const latestDate =
-    clusterNames?.[clusterNames?.length - 1]?.match(dateTest)?.[0] || '';
-
-  return latestDate;
+    const clusterNames = fileList
+      .map((file: ClusterItem) => file.name)
+      .filter((clusterName: string) => clustersFilenameTest.test(clusterName))
+      .sort();
+    const latestDate = clusterNames?.[clusterNames?.length - 1]?.match(dateTest)?.[0] || '';
+    return latestDate;
+  } catch (e) {
+    console.error('covizu error:', e);
+    throw new Error(e as string);
+  }
 };
 
 export const fetchCovizu = async (path: string) => {

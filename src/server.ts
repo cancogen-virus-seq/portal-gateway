@@ -35,8 +35,7 @@ app.use(
   morgan('dev', {
     skip: (req, res) => {
       // logs everything but health checks on dev, errors only otherwise
-      return process.env.NODE_ENV === 'development' ||
-        process.env.DEBUG === 'true'
+      return process.env.NODE_ENV === 'development' || process.env.DEBUG === 'true'
         ? req.originalUrl.includes(HEALTH_ENDPOINT)
         : res.statusCode < 400;
     },
@@ -62,33 +61,26 @@ app.use(SWAGGER_ENDPOINT, swaggerRouter);
  *                               Express Error Handling
  ***********************************************************************************/
 
-app.use(
-  (
-    error: any,
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction,
-  ) => {
-    if (error.response) {
-      if (error.response.status === 409) {
-        return res.status(400).send({
-          message: 'Conflict updating the information',
-        });
-      }
-    } else if (error.request) {
-      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-      // http.ClientRequest in node.js
-      logger.error(error.request);
-    } else {
-      logger.error(error.message);
+app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (error.response) {
+    if (error.response.status === 409) {
+      return res.status(400).send({
+        message: 'Conflict updating the information',
+      });
     }
+  } else if (error.request) {
+    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+    // http.ClientRequest in node.js
+    logger.error(error.request);
+  } else {
+    logger.error(error.message);
+  }
 
-    return res.status(error.status || 500).json({
-      errorName: error.name,
-      message: error.message,
-      ...(error.stack && { stack: error.stack }),
-    });
-  },
-);
+  return res.status(error.status || 500).json({
+    errorName: error.name,
+    message: error.message,
+    ...(error.stack && { stack: error.stack }),
+  });
+});
 
 export default app;

@@ -1,12 +1,5 @@
 import { fetchCovizu, getDataVersion } from './fetchHandlers';
-import {
-  Clusters,
-  DataVersion,
-  Dbstats,
-  StoredData,
-  StoredDataTypes,
-  Timetree,
-} from './types';
+import { Clusters, DataVersion, Dbstats, StoredData, StoredDataTypes, Timetree } from './types';
 import {
   parse_clusters,
   index_accessions,
@@ -32,7 +25,7 @@ export const storedData: StoredData = {
 };
 
 // fetch data on startup
-updateData(); // TODO rerun this at intervals
+updateData();
 
 async function updateData() {
   const currentDataVersion = (await getDataVersion()) as DataVersion;
@@ -42,9 +35,7 @@ async function updateData() {
 
   if (shouldUpdateData) {
     storedData.dataVersion = currentDataVersion;
-    const { clustersPath, dbstatsPath, timetreePath } = getDataPaths(
-      storedData.dataVersion,
-    );
+    const { clustersPath, dbstatsPath, timetreePath } = getDataPaths(storedData.dataVersion);
 
     // get remotely hosted data
     storedData.dbstats = (await fetchCovizu(dbstatsPath)) as Dbstats;
@@ -60,10 +51,7 @@ async function updateData() {
       .sort()
       .concat(Object.keys(storedData.lineage_to_cid).sort())
       .map((accn) => [normalize(accn), accn]);
-    storedData.tips = await map_clusters_to_tips(
-      storedData.df,
-      storedData.clusters,
-    );
+    storedData.tips = await map_clusters_to_tips(storedData.df, storedData.clusters);
   }
 }
 
