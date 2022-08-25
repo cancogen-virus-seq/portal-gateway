@@ -24,9 +24,6 @@ export const storedData: StoredData = {
   tips: undefined,
 };
 
-// fetch data on startup
-updateData();
-
 async function updateData() {
   const currentDataVersion = (await getDataVersion()) as DataVersion;
   const shouldUpdateData =
@@ -61,3 +58,6 @@ export async function getData(dataType: StoredDataTypes) {
   }
   return storedData[dataType] as StoredData[typeof dataType];
 }
+
+// fetch data on startup
+updateData();

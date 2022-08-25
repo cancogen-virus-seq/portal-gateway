@@ -2,7 +2,6 @@ import axios from 'axios';
 import urlJoin from 'url-join';
 import getAppConfig from '../../../config/global';
 import { ClusterItem } from './types';
-import { COVIZU_VERSION } from './utils';
 
 // covizu customizations for virusseq
 
@@ -19,8 +18,8 @@ const axiosCovizu = axios.create({
 
 // setup - find out the latest version of the data
 
-const dataUrlBase = urlJoin(config.covizu.dataUrl, COVIZU_VERSION);
-const fileListUrl = `${config.covizu.fileListUrl}?format=json&prefix=${COVIZU_VERSION}/clusters.20`;
+const dataUrlBase = urlJoin(config.covizu.dataUrl, config.covizu.version);
+const fileListUrl = `${config.covizu.fileListUrl}?format=json&prefix=${config.covizu.version}/clusters.20`;
 const clustersFilenameTest = /^(\d+\.){2}\d+\/(clusters\.)\d{4}(-\d{2}){2}(\.json)$/;
 const dateTest = /\d{4}(-\d{2}){2}/;
 
@@ -41,7 +40,7 @@ export const getDataVersion = async () => {
     const latestDate = clusterNames?.[clusterNames?.length - 1]?.match(dateTest)?.[0] || '';
     return latestDate;
   } catch (e) {
-    console.error('covizu error:', e);
+    console.error('covizu error (getDataVersion):', e);
     throw new Error(e as string);
   }
 };
@@ -54,7 +53,7 @@ export const fetchCovizu = async (path: string) => {
     });
     return res.data;
   } catch (e) {
-    console.error('covizu error:', e);
+    console.error('covizu error (fetchCovizu):', e);
     throw new Error(e as string);
   }
 };

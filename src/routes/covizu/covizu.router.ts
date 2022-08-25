@@ -4,11 +4,12 @@ import { DataVersion, StoredDataTypes } from './custom/types';
 import { getDataVersion } from './custom/fetchHandlers';
 import { getData } from './custom/fetchData';
 import { MIN_RESULTS, normalize, prefix, utcDate } from './server/utils';
-import { COVIZU_VERSION } from './custom/utils';
+import getAppConfig from 'config/global';
 
 // based on server.js from covizu
 
 const router: Router = Router();
+const config = getAppConfig();
 
 router.use(compression());
 
@@ -110,7 +111,7 @@ router.get('/getHits/:query', async (req, res) => {
 router.get('/status', async (req, res) => {
   const dataVersion = (await getDataVersion()) as DataVersion;
   res.status(200).send({
-    covizuVersion: COVIZU_VERSION,
+    covizuVersion: config.covizu.version,
     dataVersion,
   });
 });
