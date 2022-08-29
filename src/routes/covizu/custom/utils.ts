@@ -9,7 +9,7 @@ export const checkIfNewData = (current: string, stored: string) => {
   return versionCurrent > versionStored;
 };
 
-export const getDataPaths = (dataVersion: string) => ({
+export const getDataPaths = (dataVersion = 'indeterminate' ) => ({
   clustersPath: ['clusters', dataVersion, 'json'].join('.'),
   dbstatsPath: ['dbstats', dataVersion, 'json'].join('.'),
   timetreePath: ['timetree', dataVersion, 'nwk'].join('.'),
