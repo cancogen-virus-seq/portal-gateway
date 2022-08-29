@@ -56,6 +56,11 @@ export interface AppConfig {
   download: {
     sequences_limit: number;
   };
+  covizu: {
+    dataUrl: string;
+    fileListUrl: string;
+    version: string;
+  };
 }
 
 let appSecrets: AppSecrets | undefined = undefined;
@@ -126,6 +131,11 @@ const getAppConfig = (): AppConfig => {
     },
     download: {
       sequences_limit: Number(process.env.SEQ_FILE_DOWNLOAD_LIMIT) || 10,
+    },
+    covizu: {
+      dataUrl: process.env.COVIZU_DATA_URL || '',
+      fileListUrl: process.env.COVIZU_FILE_LIST_URL || '',
+      version: process.env.COVIZU_VERSION || '',
     },
   };
 };
