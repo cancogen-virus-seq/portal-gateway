@@ -6,7 +6,7 @@ import { getData } from './custom/fetchData';
 import { MIN_RESULTS, normalize, prefix, utcDate } from './server/utils';
 import getAppConfig from 'config/global';
 
-// based on server.js from covizu
+// based on server.js from covizu team
 
 const router: Router = Router();
 const config = getAppConfig();

@@ -1,10 +1,8 @@
 // @ts-nocheck
-
-// utils written by covizu team
+// from covizu team
 
 // This is a hack to match anything that could be an acc number prefix
-const prefix =
-  /^(E|I|EP|IS|EPI_I|EPI_IS|EPI_ISL_?|EPI_?|ISL_?|[A-Z]\.[1-9]+)$/i;
+const prefix = /^(E|I|EP|IS|EPI_I|EPI_IS|EPI_ISL_?|EPI_?|ISL_?|[A-Z]\.[1-9]+)$/i;
 const MIN_RESULTS = 10;
 const normalize = (str: string) => str.replace(/[^a-z0-9]/gi, '').toLowerCase();
 
@@ -104,13 +102,4 @@ function utcDate(date: string) {
   return new Date(dateObj.getTime() + dateObj.getTimezoneOffset() * 60000);
 }
 
-export {
-  merge_tables,
-  MIN_RESULTS,
-  mode,
-  normalize,
-  prefix,
-  tabulate,
-  unique,
-  utcDate,
-};
+export { merge_tables, MIN_RESULTS, mode, normalize, prefix, tabulate, unique, utcDate };

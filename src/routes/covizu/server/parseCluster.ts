@@ -1,4 +1,5 @@
 // @ts-nocheck
+// from covizu team
 import { timeDay } from 'd3-time';
 
 import { Clusters } from '../custom/types';
@@ -79,11 +80,7 @@ function parse_variant(variant, y, cidx, accn, mindate, maxdate) {
     var label =
         variant[0][2] === variant[0][1]
           ? variant[0][1] + '/' + variant[0][4].replace(pat, '$1')
-          : variant[0][2] +
-            '/' +
-            variant[0][1] +
-            '/' +
-            variant[0][4].replace(pat, '$1'), //Issue #323: avoid double tagging
+          : variant[0][2] + '/' + variant[0][1] + '/' + variant[0][4].replace(pat, '$1'), //Issue #323: avoid double tagging
       coldates = variant.map((x) => x[0]),
       isodate,
       samples;
@@ -120,9 +117,7 @@ function parse_variant(variant, y, cidx, accn, mindate, maxdate) {
       country = samples.map((x) => x[2]);
       regions = samples.map((x) => x[3]);
 
-      let provinces = divisions.filter((x) =>
-        Object.keys(province_pal).includes(x),
-      );
+      let provinces = divisions.filter((x) => Object.keys(province_pal).includes(x));
 
       pdata.push({
         cidx,
@@ -343,15 +338,10 @@ async function parse_clusters(clusters) {
         return pcount;
       }
     });
-    let which_max = province_counts.indexOf(
-      province_counts.reduce((a, b) => (a > b ? a : b)),
-    );
-    cluster['province'] =
-      which_max > 0 ? Object.keys(province_pal)[which_max] : null;
+    let which_max = province_counts.indexOf(province_counts.reduce((a, b) => (a > b ? a : b)));
+    cluster['province'] = which_max > 0 ? Object.keys(province_pal)[which_max] : null;
 
-    cluster['c2r'] = merge_maps(
-      variants.map((x) => x.c2r).filter((x) => x !== undefined),
-    );
+    cluster['c2r'] = merge_maps(variants.map((x) => x.c2r).filter((x) => x !== undefined));
   }
   return beaddata;
 }
@@ -378,11 +368,7 @@ async function map_clusters_to_tips(df, clusters) {
     var labels = Object.keys(cluster['nodes']),
       root = tip_labels.filter((value) => value === cluster['lineage'])[0];
     if (root === undefined) {
-      console.log(
-        'Failed to match cluster of index ',
-        cidx,
-        ' to a tip in the tree',
-      );
+      console.log('Failed to match cluster of index ', cidx, ' to a tip in the tree');
       continue;
     }
 
@@ -406,9 +392,7 @@ async function map_clusters_to_tips(df, clusters) {
 
     // Calculate the mean collection date
     let date_diffs = coldates.map((x) => timeDay.count(first_date, utcDate(x))),
-      mean_date = Math.round(
-        date_diffs.reduce((a, b) => a + b, 0) / date_diffs.length,
-      );
+      mean_date = Math.round(date_diffs.reduce((a, b) => a + b, 0) / date_diffs.length);
 
     // augment data frame with cluster data
     tips[root_idx].cluster_idx = cidx;
@@ -445,8 +429,7 @@ async function map_clusters_to_tips(df, clusters) {
     // calculate residual from mean differences and mean collection date - fixes #241
     let times = coldates.map((x) => utcDate(x).getTime()),
       origin = 18231, // days between 2019-12-01 and UNIX epoch (1970-01-01)
-      mean_time =
-        times.reduce((x, y) => x + y) / times.length / 8.64e7 - origin,
+      mean_time = times.reduce((x, y) => x + y) / times.length / 8.64e7 - origin,
       rate = 0.0655342, // subs per genome per day
       exp_diffs = rate * mean_time; // expected number of differences
     tips[root_idx].residual = tip_stats.mean_ndiffs - exp_diffs; // tip_stats.residual;
@@ -538,9 +521,4 @@ function map_country_to_region(country: string, regions: any) {
   return c2r;
 }
 
-export {
-  index_accessions,
-  index_lineage,
-  map_clusters_to_tips,
-  parse_clusters,
-};
+export { index_accessions, index_lineage, map_clusters_to_tips, parse_clusters };
