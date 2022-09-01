@@ -9,6 +9,7 @@ import {
 import { readTree } from '../server/phylo';
 import { checkIfNewData, getDataPaths } from './utils';
 import { normalize } from '../server/utils';
+import sendSlackNotification from './sendSlackNotification';
 
 // cache version & data
 export const storedData: StoredData = {
@@ -24,7 +25,19 @@ export const storedData: StoredData = {
   tips: undefined,
 };
 
-export async function updateData() {
+export enum UpdateDataArg {
+  API_REQUEST = 'API_REQUEST',
+  MISSING_DATA = 'MISSING_DATA',
+  SERVER_START = 'SERVER_START',
+}
+
+const updateMessage: { [K in UpdateDataArg]: string } = {
+  API_REQUEST: '/update request',
+  MISSING_DATA: 'missing data',
+  SERVER_START: 'server started',
+};
+
+export async function updateData(arg: UpdateDataArg) {
   const currentDataVersion = (await getDataVersion()) as DataVersion;
   const shouldUpdateData =
     storedData.dataVersion === undefined ||
@@ -50,14 +63,21 @@ export async function updateData() {
       .map((accn) => [normalize(accn), accn]);
     storedData.tips = await map_clusters_to_tips(storedData.df, storedData.clusters);
   }
+
+  await sendSlackNotification({
+    message: `Covizu data ${shouldUpdateData ? `updated successfully` : 'already up-to-date'}: ${
+      updateMessage[arg]
+    }`,
+    version: storedData.dataVersion,
+  });
 }
 
 export async function getData(dataType: StoredDataTypes) {
   if (storedData[dataType] === undefined) {
-    await updateData();
+    await updateData(UpdateDataArg.MISSING_DATA);
   }
   return storedData[dataType] as StoredData[typeof dataType];
 }
 
 // fetch data on startup
-updateData();
+updateData(UpdateDataArg.SERVER_START);

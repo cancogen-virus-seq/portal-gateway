@@ -59,6 +59,7 @@ export interface AppConfig {
   covizu: {
     dataUrl: string;
     fileListUrl: string;
+    slackUrl: string;
     version: string;
   };
 }
@@ -135,6 +136,7 @@ const getAppConfig = (): AppConfig => {
     covizu: {
       dataUrl: process.env.COVIZU_DATA_URL || '',
       fileListUrl: process.env.COVIZU_FILE_LIST_URL || '',
+      slackUrl: process.env.COVIZU_SLACK_WEBHOOK_URL || '',
       version: process.env.COVIZU_VERSION || '',
     },
   };
