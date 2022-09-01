@@ -24,7 +24,7 @@ export const storedData: StoredData = {
   tips: undefined,
 };
 
-async function updateData() {
+export async function updateData() {
   const currentDataVersion = (await getDataVersion()) as DataVersion;
   const shouldUpdateData =
     storedData.dataVersion === undefined ||

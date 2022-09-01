@@ -2,7 +2,7 @@ import { ErrorRequestHandler, Router } from 'express';
 import compression from 'compression';
 import { DataVersion, StoredDataTypes } from './custom/types';
 import { getDataVersion } from './custom/fetchHandlers';
-import { getData } from './custom/fetchData';
+import { getData, updateData } from './custom/fetchData';
 import { MIN_RESULTS, normalize, prefix, utcDate } from './server/utils';
 import getAppConfig from '../../config/global';
 
@@ -123,6 +123,13 @@ router.get('/data/:query', async (req, res) => {
   res.send(data);
 });
 
+// CUSTOM - trigger an update
+router.get('/update', async (req, res) => {
+  await updateData();
+  res.status(200).send('Covizu data updated');
+});
+
+// needs to be the last item
 // CUSTOM - error handling
 router.use(((err, req, res, next) => {
   if (req.xhr) {
