@@ -18,7 +18,7 @@ const sendSlackNotification = async ({
         }`,
       })
       .catch((e) => {
-        console.log('slack error', e);
+        console.log('Slack error', e);
       });
   }
 };
