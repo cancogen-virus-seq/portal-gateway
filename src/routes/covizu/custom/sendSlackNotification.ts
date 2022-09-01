@@ -4,17 +4,17 @@ import getAppConfig from '@/config/global';
 const config = getAppConfig();
 
 const sendSlackNotification = async ({
+  dataVersion,
   message,
-  version,
 }: {
+  dataVersion?: string;
   message: string;
-  version?: string;
 }) => {
   if (config.covizu.slackUrl) {
     await axios
       .post(config.covizu.slackUrl, {
         text: `${message}\n${`*Covizu version:* ${config.covizu.version}`}${
-          version ? ` *Data version:* ${version}` : ''
+          dataVersion ? ` *Data version:* ${dataVersion}` : ''
         }`,
       })
       .catch((e) => {

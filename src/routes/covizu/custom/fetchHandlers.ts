@@ -57,8 +57,8 @@ export const fetchCovizu = async (path: string) => {
   } catch (e) {
     console.error('Covizu error (fetchCovizu):', e);
     await sendSlackNotification({
+      dataVersion: path.split('/')[0]?.split('.')[1], // get date from path
       message: `Covizu error (fetchCovizu): ${e as string}`,
-      version: path.split('/')[0]?.split('.')[1], // get date from path
     });
     throw new Error(e as string);
   }

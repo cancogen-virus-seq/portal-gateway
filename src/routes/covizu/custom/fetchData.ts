@@ -68,7 +68,7 @@ export async function updateData(arg: UpdateDataArg) {
     message: `Covizu data ${shouldUpdateData ? `updated successfully` : 'already up-to-date'}: ${
       updateMessage[arg]
     }`,
-    version: storedData.dataVersion,
+    dataVersion: storedData.dataVersion,
   });
 }
 
