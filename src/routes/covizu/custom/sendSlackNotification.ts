@@ -10,16 +10,17 @@ const sendSlackNotification = async ({
   message: string;
   version?: string;
 }) => {
-  if (!config.covizu.slackUrl) return; // local dev
-  await axios
-    .post(config.covizu.slackUrl, {
-      text: `${message}\n${`*Covizu version:* ${config.covizu.version}`}${
-        version ? ` *Data version:* ${version}` : ''
-      }`,
-    })
-    .catch((e) => {
-      console.log('slack error', e);
-    });
+  if (config.covizu.slackUrl) {
+    await axios
+      .post(config.covizu.slackUrl, {
+        text: `${message}\n${`*Covizu version:* ${config.covizu.version}`}${
+          version ? ` *Data version:* ${version}` : ''
+        }`,
+      })
+      .catch((e) => {
+        console.log('slack error', e);
+      });
+  }
 };
 
 export default sendSlackNotification;
