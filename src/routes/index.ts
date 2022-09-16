@@ -1,19 +1,13 @@
 import { Router } from 'express';
 
-import { SWAGGER_ENDPOINT } from '@/constants/endpoint';
+import { COVIZU_ENDPOINT, SWAGGER_ENDPOINT } from '@/constants/endpoint';
 
-import authRouter from './auth/auth.router';
-import sequenceDownloadRouter from './download/download.router';
-import storageRouter from './storage/storage.router';
 import covizuRouter from './covizu/covizu.router';
 
 const routes = (): Router => {
   const router = Router();
 
-  router.use('/auth', authRouter);
-  router.use('/covizu', covizuRouter);
-  router.use('/download/sequences', sequenceDownloadRouter);
-  router.use('/storage', storageRouter);
+  router.use(COVIZU_ENDPOINT, covizuRouter);
 
   router.get('/docs', (req, res) => {
     res.status(302).redirect(SWAGGER_ENDPOINT);

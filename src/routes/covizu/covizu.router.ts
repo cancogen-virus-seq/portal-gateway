@@ -1,15 +1,17 @@
 import { ErrorRequestHandler, Router } from 'express';
 import compression from 'compression';
+
+import getAppConfig from '@/config/global';
+
 import { DataVersion, StoredDataTypes } from './custom/types';
 import { getDataVersion } from './custom/fetchHandlers';
 import { getData, updateData, UpdateDataArg } from './custom/fetchData';
 import { MIN_RESULTS, normalize, prefix, utcDate } from './server/utils';
-import getAppConfig from '../../config/global';
 
 // based on server.js from covizu team
 
 const router: Router = Router();
-const config = getAppConfig();
+const { covizu } = getAppConfig();
 
 router.use(compression());
 
@@ -111,7 +113,7 @@ router.get('/getHits/:query', async (req, res) => {
 router.get('/status', async (req, res) => {
   const dataVersion = (await getDataVersion()) as DataVersion;
   res.status(200).send({
-    covizuVersion: config.covizu.version,
+    covizuVersion: covizu.version,
     dataVersion,
   });
 });

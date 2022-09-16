@@ -19,8 +19,8 @@
 
 import urlJoin from 'url-join';
 
-import logger from '../logger';
-import * as vault from './vault';
+// import logger from '../logger';
+// import * as vault from './vault';
 
 const JWKS_URI_PATH = '/oauth/jwks';
 
@@ -62,6 +62,9 @@ export interface AppConfig {
     slackUrl: string;
     version: string;
   };
+  debug: boolean;
+  podName: string;
+  port: number;
 }
 
 let appSecrets: AppSecrets | undefined = undefined;
@@ -69,22 +72,20 @@ let appSecrets: AppSecrets | undefined = undefined;
 const vaultEnabled = (process.env.VAULT_ENABLED || '').toLowerCase() === 'true';
 
 const loadVaultSecrets = async () => {
-  logger.info('Loading Vault secrets...');
-
+  // logger.info('Loading Vault secrets...');
   try {
     if (process.env.VAULT_SECRETS_PATH) {
-      return await vault.loadSecret(process.env.VAULT_SECRETS_PATH);
+      // return await vault.loadSecret(process.env.VAULT_SECRETS_PATH);
     }
-
     throw new Error('Path to secrets not specified but vault is enabled');
   } catch (error) {
-    logger.error(error);
+    // logger.error(error);
     throw new Error('Failed to load secrets from vault.');
   }
 };
 
 const buildAppSecrets = async (secrets: Record<string, any> = {}): Promise<AppSecrets> => {
-  logger.info('Building app secrets...');
+  // logger.info('Building app secrets...');
 
   appSecrets = {
     auth: {
@@ -139,6 +140,9 @@ const getAppConfig = (): AppConfig => {
       slackUrl: process.env.COVIZU_SLACK_WEBHOOK_URL || '',
       version: process.env.COVIZU_VERSION || '',
     },
+    debug: process.env.NODE_ENV === 'development' || process.env.DEBUG === 'true',
+    podName: process.env.HOSTNAME || '',
+    port: Number(process.env.PORT) || 4000,
   };
 };
 
