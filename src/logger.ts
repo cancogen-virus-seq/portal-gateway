@@ -19,7 +19,10 @@
 
 import { createLogger, LoggerOptions, transports, format } from 'winston';
 
-const DEBUG_MODE = process.env.NODE_ENV === 'development' || process.env.DEBUG === 'true';
+import getAppConfig from '@/config/global';
+
+const { debug } = getAppConfig();
+
 const { combine, timestamp, colorize, printf } = format;
 const options: LoggerOptions = {
   format: combine(
@@ -29,7 +32,7 @@ const options: LoggerOptions = {
   ),
   transports: [
     new transports.Console({
-      level: DEBUG_MODE ? 'debug' : 'error',
+      level: debug ? 'debug' : 'error',
     }),
     new transports.File({ filename: 'debug.log', level: 'debug' }),
   ],
@@ -37,7 +40,7 @@ const options: LoggerOptions = {
 
 const logger = createLogger(options);
 
-if (DEBUG_MODE) {
+if (debug) {
   logger.debug('Logging initialized at debug level');
 }
 

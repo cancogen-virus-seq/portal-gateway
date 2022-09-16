@@ -1,15 +1,20 @@
 require('dotenv').config({
-  debug: process.env.NODE_ENV === 'development',
+  debug: process.env.NODE_ENV === 'development' || process.env.DEBUG === 'true',
 });
 
 // import Arranger from '@overture-stack/arranger-server';
 // import { Router } from 'express';
 
+import getAppConfig from '@/config/global';
 // import { BASE_ENDPOINT, HEALTH_ENDPOINT } from './constants/endpoint';
 // import { getEsClient } from './esClient';
-import app from './server';
+import logger from '@/logger';
+import { updateData, UpdateDataArg } from '@/routes/covizu/custom/fetchData';
+import app from '@/server';
 
-const port = Number(process.env.PORT || 4000);
+const { port } = getAppConfig();
+
+console.log('Starting VirusSeq API...');
 
 // Arranger({ pingPath: HEALTH_ENDPOINT }).then((arrangerRouter: Router) => {
 //   app.use(BASE_ENDPOINT, arrangerRouter);
@@ -34,4 +39,6 @@ app.listen(port, () => {
   console.info(`\n${line}`);
   console.info(message);
   console.info(`${line}\n`);
+
+  updateData(UpdateDataArg.SERVER_START);
 });

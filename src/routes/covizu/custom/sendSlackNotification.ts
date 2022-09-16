@@ -1,7 +1,9 @@
 import axios from 'axios';
-import getAppConfig from '@/config/global';
 
-const config = getAppConfig();
+import getAppConfig from '@/config/global';
+import logger from '@/logger';
+
+const { covizu } = getAppConfig();
 
 const sendSlackNotification = async ({
   dataVersion,
@@ -10,15 +12,19 @@ const sendSlackNotification = async ({
   dataVersion?: string;
   message: string;
 }) => {
-  if (config.covizu.slackUrl) {
+  if (covizu.slackUrl) {
+    logger.debug('Attempting to send Slack notification...');
     await axios
-      .post(config.covizu.slackUrl, {
-        text: `${message}\n${`*Covizu version:* ${config.covizu.version}`}${
+      .post(covizu.slackUrl, {
+        text: `${message}\n${`*Covizu version:* ${covizu.version}`}${
           dataVersion ? ` *Data version:* ${dataVersion}` : ''
         }`,
       })
-      .catch((e) => {
-        console.log('Slack error', e);
+      .then(() => {
+        logger.debug('Slack notification sent successfully.');
+      })
+      .catch((err) => {
+        logger.error(`Error sending slack notification: ${err}.`);
       });
   }
 };
