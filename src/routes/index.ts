@@ -9,10 +9,6 @@ const routes = (): Router => {
 
   router.use(COVIZU_ENDPOINT, covizuRouter);
 
-  router.get('/docs', (req, res) => {
-    res.status(302).redirect(SWAGGER_ENDPOINT);
-  });
-
   return router;
 };
 
