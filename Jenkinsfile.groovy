@@ -83,45 +83,7 @@ pipeline {
       }
     }
 
-    stage('Publish images') {
-      when {
-        anyOf {
-          branch 'develop'
-          branch 'main'
-          // branch 'test'
-        }
-      }
-      steps {
-        container('docker') {
-          withCredentials([usernamePassword(
-            credentialsId:'argoContainers',
-            usernameVariable: 'USERNAME',
-            passwordVariable: 'PASSWORD'
-          )]) {
-            sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
-
-            script {
-              if (env.BRANCH_NAME ==~ /(develop|upgrades|test)/) { //push edge and commit tags
-                sh "docker tag api:${commit} ${gitHubRegistry}/${gitHubRepo}:${commit}"
-                sh "docker push ${gitHubRegistry}/${gitHubRepo}:${commit}"
-
-                sh "docker tag api:${commit} ${gitHubRegistry}/${gitHubRepo}:edge"
-                sh "docker push ${gitHubRegistry}/${gitHubRepo}:edge"
-              }
-
-              if (env.BRANCH_NAME ==~ /(main)/) { // push latest and version tags
-                sh "docker tag api:${commit} ${gitHubRegistry}/${gitHubRepo}:${version}"
-                sh "docker push ${gitHubRegistry}/${gitHubRepo}:${version}"
-
-                sh "docker tag api:${commit} ${gitHubRegistry}/${gitHubRepo}:latest"
-                sh "docker push ${gitHubRegistry}/${gitHubRepo}:latest"
-              }
-            }
-          }
-        }
-      }
-    }
-
+    // attempt to publish github tag before images to prevent overwriting existing ones.
     stage('Publish Git Version Tag') {
       when {
         branch 'main'
@@ -140,6 +102,45 @@ pipeline {
       }
     }
 
+    stage('Publish images') {
+      when {
+        anyOf {
+          branch 'develop'
+          branch 'main'
+          // branch 'test'
+        }
+      }
+      steps {
+        container('docker') {
+          withCredentials([usernamePassword(
+            credentialsId:'argoContainers',
+            usernameVariable: 'USERNAME',
+            passwordVariable: 'PASSWORD'
+          )]) {
+            sh 'docker login ghcr.io -u $USERNAME -p $PASSWORD'
+
+            script {
+              if (env.BRANCH_NAME ==~ /(main)/) { // push latest and version tags
+                sh "docker tag api:${commit} ${gitHubRegistry}/${gitHubRepo}:${version}"
+                sh "docker push ${gitHubRegistry}/${gitHubRepo}:${version}"
+
+                sh "docker tag api:${commit} ${gitHubRegistry}/${gitHubRepo}:latest"
+                sh "docker push ${gitHubRegistry}/${gitHubRepo}:latest"
+              } else { //push commit tag
+                sh "docker tag api:${commit} ${gitHubRegistry}/${gitHubRepo}:${commit}"
+                sh "docker push ${gitHubRegistry}/${gitHubRepo}:${commit}"
+              }
+
+              if (env.BRANCH_NAME ==~ /(develop|upgrades|test)/) { // push edge tag
+                sh "docker tag api:${commit} ${gitHubRegistry}/${gitHubRepo}:edge"
+                sh "docker push ${gitHubRegistry}/${gitHubRepo}:edge"
+              }
+            }
+          }
+        }
+      }
+    }
+
     stage('Deploy to cancogen-virus-seq-dev') {
       when {
         anyOf {
@@ -149,7 +150,7 @@ pipeline {
       }
       steps {
         script {
-          // we don't want the build to be tagged as failed because it could not be deployed.
+          // we don't want the build to be tagged as failed if it could not be deployed.
           try {
             build(job: 'virusseq/update-app-version', parameters: [
               [$class: 'StringParameterValue', name: 'CANCOGEN_ENV', value: 'dev' ],

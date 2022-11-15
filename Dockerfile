@@ -46,6 +46,10 @@ WORKDIR $APP_HOME
 USER $APP_USER
 
 COPY --from=builder \
+  /usr/ley.config.js \
+  $APP_HOME
+
+COPY --from=builder \
   /usr/package.json \
   $APP_HOME
 
@@ -62,9 +66,13 @@ COPY --from=builder \
   $APP_HOME/dist
 
 COPY --from=builder \
+  /usr/migrations \
+  $APP_HOME/migrations
+
+COPY --from=builder \
     /usr/node_modules/ \
     $APP_HOME/node_modules/
 
 EXPOSE $PORT
 
-CMD npm start
+CMD npm run start:migrate
