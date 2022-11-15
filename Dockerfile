@@ -67,4 +67,4 @@ COPY --from=builder \
 
 EXPOSE $PORT
 
-CMD npm start
+CMD npm start:container
