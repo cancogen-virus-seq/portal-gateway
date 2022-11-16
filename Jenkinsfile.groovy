@@ -88,7 +88,7 @@ pipeline {
         anyOf {
           branch 'develop'
           branch 'main'
-          // branch 'test'
+          branch 'test'
         }
       }
       steps {
@@ -144,7 +144,7 @@ pipeline {
       when {
         anyOf {
           branch 'develop'
-        // branch 'test'
+          branch 'test'
         }
       }
       steps {

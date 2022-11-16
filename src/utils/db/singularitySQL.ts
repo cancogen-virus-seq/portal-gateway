@@ -8,6 +8,7 @@ const {
 
 const singularitySQL = postgres({
 	database: singularity.name,
+	debug: singularity.debug,
 	host: singularity.host,
 	idle_timeout: singularity.idleTimeoutMS / 1000,
 	max: singularity.maxPoolSize,

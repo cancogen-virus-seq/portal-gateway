@@ -43,6 +43,7 @@ export interface AppConfig {
 	};
 	db: {
 		api: {
+			debug: boolean;
 			host: string;
 			idleTimeoutMS: number;
 			maxPoolSize: number;
@@ -52,6 +53,7 @@ export interface AppConfig {
 			user: string;
 		};
 		singularity: {
+			debug: boolean;
 			host: string;
 			idleTimeoutMS: number;
 			maxPoolSize: number;
@@ -61,6 +63,7 @@ export interface AppConfig {
 			user: string;
 		};
 		song: {
+			debug: boolean;
 			host: string;
 			idleTimeoutMS: number;
 			maxPoolSize: number;
@@ -149,6 +152,7 @@ const getAppConfig = (): AppConfig => {
 		},
 		db: {
 			api: {
+				debug: process.env.API_POSTGRES_DEBUG === 'true',
 				host: process.env.API_POSTGRES_HOST || 'localhost',
 				idleTimeoutMS: Number(process.env.API_POSTGRES_IDLETIMEOUTMS) || 1000,
 				maxPoolSize: Number(process.env.API_POSTGRES_MAXPOOLSIZE) || 20,
@@ -158,6 +162,7 @@ const getAppConfig = (): AppConfig => {
 				user: process.env.API_POSTGRES_USERNAME || '',
 			},
 			singularity: {
+				debug: process.env.SINGULARITY_POSTGRES_DEBUG === 'true',
 				host: process.env.SINGULARITY_POSTGRES_HOST || 'localhost',
 				idleTimeoutMS: Number(process.env.SINGULARITY_POSTGRES_IDLETIMEOUTMS) || 1000,
 				maxPoolSize: Number(process.env.SINGULARITY_POSTGRES_MAXPOOLSIZE) || 20,
@@ -167,6 +172,7 @@ const getAppConfig = (): AppConfig => {
 				user: process.env.SINGULARITY_POSTGRES_USERNAME || '',
 			},
 			song: {
+				debug: process.env.SONG_POSTGRES_DEBUG === 'true',
 				host: process.env.SONG_POSTGRES_HOST || 'localhost',
 				idleTimeoutMS: Number(process.env.SONG_POSTGRES_IDLETIMEOUTMS) || 1000,
 				maxPoolSize: Number(process.env.SONG_POSTGRES_MAXPOOLSIZE) || 20,

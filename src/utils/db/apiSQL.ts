@@ -8,6 +8,7 @@ const {
 
 const apiSQL = postgres({
 	database: api.name,
+	debug: api.debug,
 	host: api.host,
 	idle_timeout: api.idleTimeoutMS / 1000,
 	max: api.maxPoolSize,

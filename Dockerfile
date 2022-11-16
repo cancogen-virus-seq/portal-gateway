@@ -46,6 +46,10 @@ WORKDIR $APP_HOME
 USER $APP_USER
 
 COPY --from=builder \
+  /usr/ley.config.js \
+  $APP_HOME
+
+COPY --from=builder \
   /usr/package.json \
   $APP_HOME
 
@@ -60,6 +64,10 @@ COPY --from=builder \
 COPY --from=builder \
   /usr/dist/src \
   $APP_HOME/dist
+
+COPY --from=builder \
+  /usr/migrations \
+  $APP_HOME/migrations
 
 COPY --from=builder \
     /usr/node_modules/ \

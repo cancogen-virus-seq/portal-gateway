@@ -8,6 +8,7 @@ const {
 
 const songSQL = postgres({
 	database: song.name,
+	debug: song.debug,
 	host: song.host,
 	idle_timeout: song.idleTimeoutMS / 1000,
 	max: song.maxPoolSize,
