@@ -4,7 +4,12 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 
-import { BASE_ENDPOINT, HEALTH_ENDPOINT, SWAGGER_ENDPOINT } from './constants/endpoint';
+import {
+  ALT_SWAGGER_ENDPOINTS,
+  BASE_ENDPOINT,
+  HEALTH_ENDPOINT,
+  SWAGGER_ENDPOINT,
+} from './constants/endpoint';
 import logger from './logger';
 import apiRoutes, { healthRouter, swaggerRouter } from './routes';
 
@@ -44,12 +49,16 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 /************************************************************************************
- *                               Register all routes
+ *                               Register base routes
  ***********************************************************************************/
 
 app.use(BASE_ENDPOINT, apiRoutes());
 app.use(HEALTH_ENDPOINT, healthRouter);
 app.use(SWAGGER_ENDPOINT, swaggerRouter);
+
+app.get(ALT_SWAGGER_ENDPOINTS, (req, res) => {
+  res.status(302).redirect(SWAGGER_ENDPOINT);
+});
 
 /************************************************************************************
  *                               Express Error Handling

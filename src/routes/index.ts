@@ -1,17 +1,15 @@
 import { Router } from 'express';
 
-import { COVIZU_ENDPOINT, SWAGGER_ENDPOINT } from '@/constants/endpoint';
+import { CHANGELOG_ENDPOINT, COVIZU_ENDPOINT } from '@/constants/endpoint';
 
+import changelogRouter from './changelog/changelog.router';
 import covizuRouter from './covizu/covizu.router';
 
 const routes = (): Router => {
   const router = Router();
 
+  router.use(CHANGELOG_ENDPOINT, changelogRouter);
   router.use(COVIZU_ENDPOINT, covizuRouter);
-
-  router.get('/docs', (req, res) => {
-    res.status(302).redirect(SWAGGER_ENDPOINT);
-  });
 
   return router;
 };
