@@ -107,7 +107,7 @@ pipeline {
         anyOf {
           branch 'develop'
           branch 'main'
-          // branch 'test'
+          branch 'fix/latest_release_totals'
         }
       }
       steps {
@@ -145,7 +145,7 @@ pipeline {
       when {
         anyOf {
           branch 'develop'
-        // branch 'test'
+          branch 'fix/latest_release_totals'
         }
       }
       steps {
