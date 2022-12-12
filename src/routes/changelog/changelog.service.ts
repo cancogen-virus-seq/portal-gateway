@@ -212,28 +212,32 @@ export const getReleaseCounts = async (
 			// then filter releases based on cached counts (if cached, take out)
 			.filter(({ id }) => !cachedCountsIds.includes(id))
 			.map(
-				async (
-					{ createdAt: endTimestamp, numOfDownloads, numOfSamples, ...release },
-				): Promise<ReleaseDataInterface | null> => {
+				async ({
+					createdAt: endTimestamp,
+					numOfDownloads,
+					numOfSamples,
+					...release
+				}): Promise<ReleaseDataInterface | null> => {
 					try {
-
 						// find the index of current release
-						const index = releases.findIndex(r => r.id == release.id);
+						const index = releases.findIndex((r) => r.id == release.id);
 						// skip the last release as it doesn't have a release to be compared with
-						if(index  + 1 < releases.length){
+						if (index + 1 < releases.length) {
 							// we do this because we're comparing timestamps of release A vs release B
 							// on the first round, we want the release that we didn't include in this array
 							const startTimestamp = releases[index + 1].createdAt;
 
-							logger.info(`Calculate totals for release ${release.id} start:${startTimestamp} end:${endTimestamp}` )
-	
+							logger.info(
+								`Calculate totals for release ${release.id} start:${startTimestamp} end:${endTimestamp}`,
+							);
+
 							const getAnalysisByStatus = getAnalysesByTimeRange(startTimestamp, endTimestamp);
-	
+
 							// calculate the change totals
 							const totalSubmitted = await getAnalysisByStatus('submitted');
 							const totalSupressed = await getAnalysisByStatus('supressed');
 							const totalUpdated = await getAnalysisByStatus('updated');
-	
+
 							// and finally provide them
 							const releaseWithChangesCounted = {
 								...release,
@@ -245,9 +249,9 @@ export const getReleaseCounts = async (
 								totalSupressed,
 								totalUpdated,
 							};
-	
+
 							await persistCountData(releaseWithChangesCounted);
-	
+
 							return releaseWithChangesCounted;
 						}
 						return null;
