@@ -217,13 +217,15 @@ export const getReleaseCounts = async (
 				): Promise<ReleaseDataInterface | null> => {
 					try {
 
-						// get the index of current release
-						const index = releases.findIndex(release => release.id == release.id);
+						// find the index of current release
+						const index = releases.findIndex(r => r.id == release.id);
 						// skip the last release as it doesn't have a release to be compared with
 						if(index  + 1 < releases.length){
 							// we do this because we're comparing timestamps of release A vs release B
 							// on the first round, we want the release that we didn't include in this array
 							const startTimestamp = releases[index + 1].createdAt;
+
+							logger.info(`Calculate totals for release ${release.id} start:${startTimestamp} end:${endTimestamp}` )
 	
 							const getAnalysisByStatus = getAnalysesByTimeRange(startTimestamp, endTimestamp);
 	
