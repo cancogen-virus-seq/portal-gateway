@@ -211,39 +211,50 @@ export const getReleaseCounts = async (
 		releases
 			// then filter releases based on cached counts (if cached, take out)
 			.filter(({ id }) => !cachedCountsIds.includes(id))
-			.slice(0, -1)
 			.map(
-				async (
-					{ createdAt: endTimestamp, numOfDownloads, numOfSamples, ...release },
-					index: number,
-				): Promise<ReleaseDataInterface | null> => {
+				async ({
+					createdAt: endTimestamp,
+					numOfDownloads,
+					numOfSamples,
+					...release
+				}): Promise<ReleaseDataInterface | null> => {
 					try {
-						// we do this because we're comparing timestamps of release A vs release B
-						// on the first round, we want the release that we didn't include in this array
-						const startTimestamp = releases[index + 1].createdAt;
+						// find the index of current release
+						const index = releases.findIndex((r) => r.id == release.id);
+						// skip the last release as it doesn't have a release to be compared with
+						if (index + 1 < releases.length) {
+							// we do this because we're comparing timestamps of release A vs release B
+							// on the first round, we want the release that we didn't include in this array
+							const startTimestamp = releases[index + 1].createdAt;
 
-						const getAnalysisByStatus = getAnalysesByTimeRange(startTimestamp, endTimestamp);
+							logger.info(
+								`Calculate totals for release ${release.id} start:${startTimestamp} end:${endTimestamp}`,
+							);
 
-						// calculate the change totals
-						const totalSubmitted = await getAnalysisByStatus('submitted');
-						const totalSupressed = await getAnalysisByStatus('supressed');
-						const totalUpdated = await getAnalysisByStatus('updated');
+							const getAnalysisByStatus = getAnalysesByTimeRange(startTimestamp, endTimestamp);
 
-						// and finally provide them
-						const releaseWithChangesCounted = {
-							...release,
-							numOfDownloads: Number(numOfDownloads),
-							numOfSamples: Number(numOfSamples),
-							releaseTimeFrom: startTimestamp,
-							releaseTimeUntil: endTimestamp,
-							totalSubmitted,
-							totalSupressed,
-							totalUpdated,
-						};
+							// calculate the change totals
+							const totalSubmitted = await getAnalysisByStatus('submitted');
+							const totalSupressed = await getAnalysisByStatus('supressed');
+							const totalUpdated = await getAnalysisByStatus('updated');
 
-						await persistCountData(releaseWithChangesCounted);
+							// and finally provide them
+							const releaseWithChangesCounted = {
+								...release,
+								numOfDownloads: Number(numOfDownloads),
+								numOfSamples: Number(numOfSamples),
+								releaseTimeFrom: startTimestamp,
+								releaseTimeUntil: endTimestamp,
+								totalSubmitted,
+								totalSupressed,
+								totalUpdated,
+							};
 
-						return releaseWithChangesCounted;
+							await persistCountData(releaseWithChangesCounted);
+
+							return releaseWithChangesCounted;
+						}
+						return null;
 					} catch (err) {
 						logger.debug('Catch in getReleaseCounts');
 						logger.debug(err);
