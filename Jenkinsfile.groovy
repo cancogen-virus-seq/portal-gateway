@@ -78,7 +78,7 @@ pipeline {
             --build-arg APP_VERSION=${version} \
             --network=host \
             -f Dockerfile \
-            -t api:${commit} ."
+            -t gateway:${commit} ."
         }
       }
     }
@@ -107,6 +107,7 @@ pipeline {
         anyOf {
           branch 'develop'
           branch 'main'
+          branch 'arrangerV3'
         }
       }
       steps {
@@ -120,18 +121,18 @@ pipeline {
 
             script {
               if (env.BRANCH_NAME ==~ /(main)/) { // push latest and version tags
-                sh "docker tag api:${commit} ${gitHubRegistry}/${gitHubRepo}:${version}"
+                sh "docker tag gateway:${commit} ${gitHubRegistry}/${gitHubRepo}:${version}"
                 sh "docker push ${gitHubRegistry}/${gitHubRepo}:${version}"
 
-                sh "docker tag api:${commit} ${gitHubRegistry}/${gitHubRepo}:latest"
+                sh "docker tag gateway:${commit} ${gitHubRegistry}/${gitHubRepo}:latest"
                 sh "docker push ${gitHubRegistry}/${gitHubRepo}:latest"
               } else { //push commit tag
-                sh "docker tag api:${commit} ${gitHubRegistry}/${gitHubRepo}:${commit}"
+                sh "docker tag gateway:${commit} ${gitHubRegistry}/${gitHubRepo}:${commit}"
                 sh "docker push ${gitHubRegistry}/${gitHubRepo}:${commit}"
               }
 
               if (env.BRANCH_NAME ==~ /(develop|upgrades|test)/) { // push edge tag
-                sh "docker tag api:${commit} ${gitHubRegistry}/${gitHubRepo}:edge"
+                sh "docker tag gateway:${commit} ${gitHubRegistry}/${gitHubRepo}:edge"
                 sh "docker push ${gitHubRegistry}/${gitHubRepo}:edge"
               }
             }
@@ -144,6 +145,7 @@ pipeline {
       when {
         anyOf {
           branch 'develop'
+          // branch 'arrangerV3'
         }
       }
       steps {
@@ -151,10 +153,10 @@ pipeline {
           // we don't want the build to be tagged as failed if it could not be deployed.
           try {
             build(job: 'virusseq/update-app-version', parameters: [
-              [$class: 'StringParameterValue', name: 'CANCOGEN_ENV', value: 'dev' ],
-              [$class: 'StringParameterValue', name: 'TARGET_RELEASE', value: 'api'],
-              [$class: 'StringParameterValue', name: 'NEW_APP_VERSION', value: "${commit}" ],
-              [$class: 'StringParameterValue', name: 'BUILD_BRANCH', value: env.BRANCH_NAME ]
+              string(name: 'BUILD_BRANCH', value: env.BRANCH_NAME),
+              string(name: 'CANCOGEN_ENV', value: 'dev'),
+              string(name: 'TARGET_RELEASE', value: 'gateway'),
+              string(name: 'NEW_APP_VERSION', value: "${commit}"),
             ])
           } catch (err) {
             echo 'The app built successfully, but could not be deployed'

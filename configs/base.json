@@ -1,4 +1,4 @@
 {
-  "index": "file_centric",
-  "name": "file"
+	"documentType": "file",
+	"index": "file_centric"
 }
