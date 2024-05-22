@@ -1,6 +1,6 @@
-# VirusSeq API
+# VirusSeq Gateway
 
-Development of the Data Access Control API
+Development of the back-end gateway service for the VirusSeq Portal-ui
 
 ## Documentation
 
