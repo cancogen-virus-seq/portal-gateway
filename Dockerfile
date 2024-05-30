@@ -2,7 +2,7 @@
 # Builder
 #######################################################
 
-FROM node:18-alpine as builder
+FROM node:22-alpine as builder
 
 ENV APP_UID=1000
 ENV APP_GID=1000
@@ -29,7 +29,7 @@ RUN npm run build
 # App container
 #######################################################
 
-FROM node:slim as runtime
+FROM node:22-slim as runtime
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 ENV NODE_ENV=production

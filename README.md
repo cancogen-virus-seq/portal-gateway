@@ -25,7 +25,7 @@ Setting up the project, and prepare things to make changes
 
 ```bash
 # 1. clone the repository
-  git clone git@github.com:cancogen-virus-seq/api.git
+  git clone git@github.com:virusseq/portal-gateway.git
 
 # 2. install the dependencies
   npm ci

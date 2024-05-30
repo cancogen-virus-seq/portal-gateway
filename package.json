@@ -4,7 +4,7 @@
 	"description": "Data Access Control API",
 	"main": "src/index.ts",
 	"scripts": {
-		"build": "ttsc",
+		"build": "tspc",
 		"dev": "ts-node ./src/index.ts",
 		"dev:nodemon": "nodemon -e js,json,ts -x ts-node ./src/index.ts",
 		"migrate": "ley --require tsm --driver postgres",
@@ -34,10 +34,10 @@
 		"ley": "^0.8.1",
 		"nodemon": "^2.0.15",
 		"ts-node": "^10.4.0",
+		"ts-patch": "^3.1.2",
 		"tsconfig-paths": "^3.11.0",
 		"tsm": "^2.2.2",
-		"ttypescript": "^1.5.13",
-		"typescript": "^4.4.4",
+		"typescript": "^5.4.5",
 		"typescript-transform-paths": "^3.3.1"
 	},
 	"dependencies": {
@@ -74,7 +74,7 @@
 		]
 	},
 	"prettier": {
-		"printWidth": 100,
+		"printWidth": 120,
 		"trailingComma": "all",
 		"semi": true,
 		"singleQuote": true,
